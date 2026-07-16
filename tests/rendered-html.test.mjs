@@ -7,33 +7,24 @@ async function render() {
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
+    new Request("http://localhost/", { headers: { accept: "text/html" } }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
   );
 }
 
-test("server-renders the ERPrint dashboard", async () => {
+test("server-renders the public ERPrint sign-in", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /<html lang="pt-BR">/i);
-  assert.match(html, /<title>Painel \| ERPrint ERP<\/title>/i);
-  assert.match(html, /Sua operação, da impressão à entrega/);
-  assert.match(html, /Módulos planejados/);
-  assert.match(html, /Marketplaces/);
-  assert.match(html, /Shopee em primeiro lugar/);
+  assert.match(html, /<title>Entrar \| ERPrint ERP<\/title>/i);
+  assert.match(html, /Sua operação 3D/);
+  assert.match(html, /Continuar com ChatGPT/);
+  assert.match(html, /\/signin-with-chatgpt\?return_to=%2Fonboarding/);
+  assert.match(html, /Produção, pedidos, estoque e Shopee conectados/);
 });
 
 test("does not ship starter preview markers", async () => {

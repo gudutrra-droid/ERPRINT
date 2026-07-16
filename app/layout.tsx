@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     (host?.startsWith("localhost") ? "http" : "https");
   const origin = host ? `${protocol}://${host}` : "http://localhost:3000";
   const description =
-    "Gestão integrada da produção 3D, estoque, pedidos e vendas em marketplaces.";
+    "Gestão integrada da produção 3D, estoque, pedidos e vendas na Shopee.";
 
   return {
     metadataBase: new URL(origin),
@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: `${origin}/og.png`,
           width: 1672,
           height: 941,
-          alt: "ERPrint ERP — Da impressão 3D à entrega.",
+          alt: "ERPrint ERP — sua operação 3D em um só lugar.",
         },
       ],
     },

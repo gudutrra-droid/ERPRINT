@@ -1,9 +1,6 @@
 import type { ErpModule } from "../lib/modules";
 
-type ModuleCardProps = {
-  module: ErpModule;
-  order: number;
-};
+type ModuleCardProps = { module: ErpModule; order: number };
 
 export function ModuleCard({ module, order }: ModuleCardProps) {
   return (

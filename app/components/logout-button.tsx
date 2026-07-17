@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { chatGPTSignOutPath } from "../chatgpt-auth";
 import { authClient } from "../lib/auth-client";
+import { chatGPTSignOutPath } from "../lib/chatgpt-auth-paths";
 
 type LogoutButtonProps = { provider: "password" | "chatgpt" };
 

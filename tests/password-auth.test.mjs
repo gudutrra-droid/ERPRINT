@@ -90,3 +90,48 @@ test("creates an isolated email/password account and session", async () => {
     await miniflare.dispose();
   }
 });
+
+test("stores company fiscal and operational settings precisely", async () => {
+  const { db, miniflare } = await createTestDatabase();
+
+  try {
+    await db
+      .prepare(
+        `INSERT INTO companies (
+          id, name, segment, owner_email, tax_regime, tax_rate_bps,
+          electricity_rate_cents, monthly_fixed_costs_cents,
+          default_profit_margin_bps, currency, timezone
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .bind(
+        "company-test",
+        "ERPrint Teste",
+        "3d-printing",
+        "owner@erprint.test",
+        "simples_nacional",
+        600,
+        95,
+        125050,
+        3000,
+        "BRL",
+        "America/Sao_Paulo",
+      )
+      .run();
+
+    const company = await db
+      .prepare(
+        `SELECT tax_rate_bps, electricity_rate_cents,
+          monthly_fixed_costs_cents, default_profit_margin_bps
+        FROM companies WHERE id = ?`,
+      )
+      .bind("company-test")
+      .first();
+
+    assert.equal(company.tax_rate_bps, 600);
+    assert.equal(company.electricity_rate_cents, 95);
+    assert.equal(company.monthly_fixed_costs_cents, 125050);
+    assert.equal(company.default_profit_margin_bps, 3000);
+  } finally {
+    await miniflare.dispose();
+  }
+});

@@ -15,6 +15,13 @@
       "when": 1784295613607,
       "tag": "0001_daily_dormammu",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1784317355266,
+      "tag": "0002_curvy_kat_farrell",
+      "breakpoints": true
     }
   ]
 }

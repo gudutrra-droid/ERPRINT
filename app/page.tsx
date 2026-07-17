@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { chatGPTSignInPath, getChatGPTUser } from "./chatgpt-auth";
+import { AuthForm } from "./components/auth-form";
+import { getAppUser } from "./current-user";
+import { chatGPTSignInPath } from "./chatgpt-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,14 +12,22 @@ export const metadata: Metadata = {
   description: "Acesse a gestão integrada da sua operação de impressão 3D.",
 };
 
-export default async function Home() {
-  const user = await getChatGPTUser();
+type HomeProps = { searchParams: Promise<{ return_to?: string }> };
+
+export default async function Home({ searchParams }: HomeProps) {
+  const user = await getAppUser();
 
   if (user) {
     const { getCompanyForUser } = await import("../db/companies");
-    const company = await getCompanyForUser(user.email);
+    const company = await getCompanyForUser(user);
     redirect(company ? "/dashboard" : "/onboarding");
   }
+
+  const requestedReturnTo = (await searchParams).return_to ?? "/dashboard";
+  const returnTo =
+    requestedReturnTo.startsWith("/") && !requestedReturnTo.startsWith("//")
+      ? requestedReturnTo
+      : "/dashboard";
 
   return (
     <main className="auth-shell">
@@ -36,14 +46,10 @@ export default async function Home() {
           </p>
         </div>
 
-        <div className="auth-action">
-          <a className="primary-button chatgpt-button" href={chatGPTSignInPath("/onboarding")}>
-            <span className="chatgpt-mark" aria-hidden="true">✦</span>
-            Continuar com ChatGPT
-            <span className="button-arrow" aria-hidden="true">→</span>
-          </a>
-          <p><span aria-hidden="true">●</span> Acesso seguro. Sem mais uma senha para lembrar.</p>
-        </div>
+        <AuthForm
+          returnTo={returnTo}
+          chatGPTSignInPath={chatGPTSignInPath("/onboarding")}
+        />
 
         <footer className="auth-footer">© {new Date().getFullYear()} ERPrint · Duttra</footer>
       </section>

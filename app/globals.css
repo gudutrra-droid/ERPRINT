@@ -36,7 +36,7 @@ a { color: inherit; }
 .auth-panel { background: radial-gradient(circle at 10% 10%, rgba(47,107,255,.08), transparent 35%), #080a0f; border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 100vh; padding: clamp(32px, 5vw, 74px); position: relative; z-index: 2; }
 .auth-brand { align-items: center; display: inline-flex; font-size: 17px; font-weight: 650; gap: 11px; letter-spacing: -.03em; text-decoration: none; width: fit-content; }
 .brand-glyph, .brand-mark { align-items: center; background: linear-gradient(145deg, #4d7fff, #2154e6); border: 1px solid rgba(255,255,255,.16); border-radius: 11px; box-shadow: 0 10px 30px rgba(47,107,255,.25); display: flex; font-size: 15px; font-weight: 750; height: 34px; justify-content: center; width: 34px; }
-.auth-copy { margin: auto 0 50px; max-width: 480px; }
+.auth-copy { margin: auto 0 30px; max-width: 480px; }
 .auth-copy h1, .onboarding-intro h1 { font-size: clamp(43px, 5.2vw, 72px); font-weight: 480; letter-spacing: -.065em; line-height: .98; margin: 0; }
 .auth-copy > p:last-child { color: var(--muted); font-size: 15px; line-height: 1.7; margin: 26px 0 0; max-width: 450px; }
 .auth-action { max-width: 440px; width: 100%; }
@@ -46,6 +46,26 @@ a { color: inherit; }
 .auth-action p { color: #697184; font-size: 10px; margin: 15px 0 0; text-align: center; }
 .auth-action p span { color: var(--success); font-size: 8px; margin-right: 6px; }
 .auth-footer { color: #4d5462; font-size: 10px; margin-top: 44px; }
+.password-auth { max-width: 440px; width: 100%; }
+.auth-tabs { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 11px; display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 16px; padding: 3px; }
+.auth-tabs button { background: transparent; border: 0; border-radius: 8px; color: #697386; cursor: pointer; font-size: 10px; min-height: 34px; }
+.auth-tabs button[aria-selected="true"] { background: #171b24; box-shadow: 0 4px 16px rgba(0,0,0,.18); color: #f1f4f8; }
+.login-form { display: grid; gap: 13px; }
+.login-form label { display: grid; gap: 7px; }
+.login-form label > span { color: #9da6b6; font-size: 9px; font-weight: 550; }
+.login-form input { background: #0b0e13; border: 1px solid #252c37; border-radius: 11px; color: #f1f4f8; font-size: 11px; min-height: 45px; padding: 0 13px; transition: border-color 160ms ease, box-shadow 160ms ease; width: 100%; }
+.login-form input::placeholder { color: #454d5c; }
+.login-form input:focus { border-color: #4c76e7; box-shadow: 0 0 0 3px rgba(47,107,255,.11); outline: none; }
+.login-form .primary-button { border: 0; justify-content: space-between; margin-top: 3px; min-height: 48px; width: 100%; }
+.login-form .primary-button:disabled { cursor: wait; opacity: .65; transform: none; }
+.auth-error { background: rgba(238,88,107,.08); border: 1px solid rgba(238,88,107,.24); border-radius: 9px; color: #ff9aaa; font-size: 9px; line-height: 1.45; margin: 0; padding: 9px 11px; }
+.auth-divider { align-items: center; color: #4b5362; display: flex; font-size: 8px; gap: 10px; margin: 14px 0; }
+.auth-divider::before, .auth-divider::after { background: var(--line); content: ""; flex: 1; height: 1px; }
+.chatgpt-secondary { align-items: center; background: rgba(255,255,255,.025); border: 1px solid var(--line); border-radius: 11px; color: #aeb6c4; display: flex; font-size: 10px; gap: 9px; justify-content: center; min-height: 42px; text-decoration: none; transition: background 160ms ease, color 160ms ease; }
+.chatgpt-secondary:hover { background: rgba(255,255,255,.05); color: white; }
+.chatgpt-secondary span { color: #7798f6; }
+.auth-security { color: #596274; font-size: 8px; margin: 12px 0 0; text-align: center; }
+.auth-security i { background: var(--success); border-radius: 50%; display: inline-block; height: 5px; margin-right: 5px; width: 5px; }
 
 .spatial-stage { background: radial-gradient(circle at 48% 38%, rgba(47,107,255,.12), transparent 38%), linear-gradient(145deg, #0b0e15, #05070a); min-height: 100vh; overflow: hidden; padding: clamp(34px, 4vw, 64px); position: relative; }
 .spatial-stage::before { background-image: linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px); background-size: 48px 48px; content: ""; inset: 0; mask-image: linear-gradient(to bottom, black, transparent 88%); position: absolute; }
@@ -86,7 +106,7 @@ a { color: inherit; }
 .onboarding-shell { background: radial-gradient(circle at 72% 34%, rgba(47,107,255,.11), transparent 28%), #07090d; min-height: 100vh; padding: 34px clamp(24px, 6vw, 90px) 70px; }
 .onboarding-header { align-items: center; display: flex; justify-content: space-between; }
 .user-chip { align-items: center; color: #7d8799; display: flex; font-size: 11px; gap: 14px; }
-.user-chip a { border-left: 1px solid var(--line); color: #b8bfcb; padding-left: 14px; text-decoration: none; }
+.user-chip a, .user-chip button { background: transparent; border: 0; border-left: 1px solid var(--line); color: #b8bfcb; cursor: pointer; padding-left: 14px; text-decoration: none; }
 .onboarding-grid { align-items: center; display: grid; gap: clamp(50px, 10vw, 150px); grid-template-columns: minmax(300px, .75fr) minmax(480px, 1fr); margin: 8vh auto 0; max-width: 1280px; }
 .onboarding-intro > p:nth-of-type(2) { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 25px 0 0; max-width: 390px; }
 .setup-steps { display: flex; gap: 0; list-style: none; margin: 56px 0 0; padding: 0; }
@@ -135,7 +155,7 @@ a { color: inherit; }
 .company-identity strong, .company-identity span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .company-identity strong { font-size: 9px; font-weight: 550; }
 .company-identity span { color: #555f70; font-size: 7px; margin-top: 4px; }
-.sidebar-footer > a { color: #6e7788; font-size: 12px; margin-left: auto; text-decoration: none; }
+.sidebar-footer > a, .sidebar-footer > button { background: transparent; border: 0; color: #6e7788; cursor: pointer; font-size: 12px; margin-left: auto; padding: 3px; text-decoration: none; }
 .main-content { margin-left: 242px; max-width: 1660px; min-height: 100vh; padding: 36px clamp(24px, 4vw, 60px) 60px; }
 .topbar, .section-heading, .topbar-actions, .dashboard-hero, .hero-signal { align-items: center; display: flex; }
 .topbar { justify-content: space-between; margin-bottom: 30px; }

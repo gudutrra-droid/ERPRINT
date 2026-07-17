@@ -1,9 +1,9 @@
-import { chatGPTSignOutPath } from "../chatgpt-auth";
+import { LogoutButton } from "./logout-button";
 import { modules } from "../lib/modules";
 
-type SidebarProps = { companyName: string; userEmail: string };
+type SidebarProps = { companyName: string; userEmail: string; provider: "password" | "chatgpt" };
 
-export function Sidebar({ companyName, userEmail }: SidebarProps) {
+export function Sidebar({ companyName, userEmail, provider }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -24,7 +24,7 @@ export function Sidebar({ companyName, userEmail }: SidebarProps) {
       <div className="sidebar-footer">
         <div className="company-avatar" aria-hidden="true">{companyName.slice(0, 1).toUpperCase()}</div>
         <div className="company-identity"><strong>{companyName}</strong><span>{userEmail}</span></div>
-        <a href={chatGPTSignOutPath("/")} aria-label="Sair do ERPrint">↗</a>
+        <LogoutButton provider={provider} />
       </div>
     </aside>
   );

@@ -1,9 +1,18 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
+import type { AppUser } from "../app/current-user";
 import { getDb } from ".";
 import { companies, companyMembers } from "./schema";
 
-export async function getCompanyForUser(email: string) {
+export async function getCompanyForUser(user: AppUser) {
   const db = getDb();
+  const ownership =
+    user.provider === "password"
+      ? eq(companyMembers.authUserId, user.id)
+      : and(
+          eq(companyMembers.userEmail, user.email.toLowerCase()),
+          isNull(companyMembers.authUserId),
+        );
+
   const [company] = await db
     .select({
       id: companies.id,
@@ -16,7 +25,7 @@ export async function getCompanyForUser(email: string) {
     })
     .from(companyMembers)
     .innerJoin(companies, eq(companyMembers.companyId, companies.id))
-    .where(eq(companyMembers.userEmail, email.toLowerCase()))
+    .where(ownership)
     .limit(1);
 
   return company ?? null;

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCompanyForUser } from "../../db/companies";
-import { chatGPTSignOutPath, requireChatGPTUser } from "../chatgpt-auth";
+import { LogoutButton } from "../components/logout-button";
+import { requireAppUser } from "../current-user";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,8 @@ export const metadata: Metadata = {
 type OnboardingProps = { searchParams: Promise<{ error?: string }> };
 
 export default async function Onboarding({ searchParams }: OnboardingProps) {
-  const user = await requireChatGPTUser("/onboarding");
-  const company = await getCompanyForUser(user.email);
+  const user = await requireAppUser("/onboarding");
+  const company = await getCompanyForUser(user);
   if (company) redirect("/dashboard");
   const { error } = await searchParams;
 
@@ -28,7 +29,7 @@ export default async function Onboarding({ searchParams }: OnboardingProps) {
         </Link>
         <div className="user-chip">
           <span>{user.displayName}</span>
-          <a href={chatGPTSignOutPath("/")}>Sair</a>
+          <LogoutButton provider={user.provider} />
         </div>
       </header>
 

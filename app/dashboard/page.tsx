@@ -5,19 +5,19 @@ import { ModuleCard } from "../components/module-card";
 import { Sidebar } from "../components/sidebar";
 import { StatCard } from "../components/stat-card";
 import { modules } from "../lib/modules";
-import { requireChatGPTUser } from "../chatgpt-auth";
+import { requireAppUser } from "../current-user";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Painel", description: "Visão geral da operação de produção 3D e vendas da ERPrint." };
 
 export default async function Dashboard() {
-  const user = await requireChatGPTUser("/dashboard");
-  const company = await getCompanyForUser(user.email);
+  const user = await requireAppUser("/dashboard");
+  const company = await getCompanyForUser(user);
   if (!company) redirect("/onboarding");
 
   return (
     <div className="app-shell">
-      <Sidebar companyName={company.name} userEmail={user.email} />
+      <Sidebar companyName={company.name} userEmail={user.email} provider={user.provider} />
       <main className="main-content">
         <header className="topbar">
           <div>

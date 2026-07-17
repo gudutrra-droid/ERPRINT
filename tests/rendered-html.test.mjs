@@ -22,6 +22,10 @@ test("server-renders the public ERPrint sign-in", async () => {
   assert.match(html, /<html lang="pt-BR">/i);
   assert.match(html, /<title>Entrar \| ERPrint ERP<\/title>/i);
   assert.match(html, /Sua operação 3D/);
+  assert.match(html, /Criar conta/);
+  assert.match(html, /E-mail/);
+  assert.match(html, /Senha/);
+  assert.match(html, /Entrar no ERPrint/);
   assert.match(html, /Continuar com ChatGPT/);
   assert.match(html, /\/signin-with-chatgpt\?return_to=%2Fonboarding/);
   assert.match(html, /Produção, pedidos, estoque e Shopee conectados/);

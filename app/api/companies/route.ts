@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { getCompanyForUser } from "../../../db/companies";
 import { companies, companyMembers } from "../../../db/schema";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { getAppUser } from "../../current-user";
 
 const segments = new Set(["3d-printing", "maker", "manufacturing", "retail", "other"]);
 
@@ -13,10 +13,10 @@ function onboardingError(request: Request, message: string) {
 }
 
 export async function POST(request: Request) {
-  const user = await getChatGPTUser();
+  const user = await getAppUser();
   if (!user) return Response.json({ error: "Não autenticado." }, { status: 401 });
 
-  const existing = await getCompanyForUser(user.email);
+  const existing = await getCompanyForUser(user);
   if (existing) return Response.redirect(new URL("/dashboard", request.url), 303);
 
   const formData = await request.formData();
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
         id: crypto.randomUUID(),
         companyId,
         userEmail: email,
+        authUserId: user.provider === "password" ? user.id : null,
         displayName: user.fullName,
         role: "owner",
       }),
@@ -52,8 +53,16 @@ export async function POST(request: Request) {
   } catch (error) {
     const duplicate = error instanceof Error && /unique|constraint/i.test(error.message);
     if (duplicate) {
+      const nowExisting = await getCompanyForUser(user);
+      if (nowExisting) return Response.redirect(new URL("/dashboard", request.url), 303);
+
       const [owner] = await db.select({ id: companies.id }).from(companies).where(eq(companies.ownerEmail, email)).limit(1);
-      if (owner) return Response.redirect(new URL("/dashboard", request.url), 303);
+      if (owner) {
+        return onboardingError(
+          request,
+          "Este e-mail já está vinculado a uma empresa por outro método de acesso.",
+        );
+      }
       return onboardingError(request, "Este CNPJ já está vinculado a outra empresa.");
     }
     throw error;

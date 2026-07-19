@@ -1,0 +1,13 @@
+// Config usada apenas para comandos de banco (wrangler d1 ... -c wrangler.d1.jsonc).
+// O deploy do worker usa a config gerada em dist/server/wrangler.json.
+{
+  "name": "erprint-erp",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "erprint-db",
+      "database_id": "a76bf110-5ed3-4dfc-9cc3-864b9605c370",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}

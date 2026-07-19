@@ -3,8 +3,10 @@ import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { sites } from "./build/sites-vite-plugin";
 
-const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
-  "00000000-0000-4000-8000-000000000000";
+// Banco D1 de produção na conta Cloudflare própria (erprint-db).
+// Em dev local o Miniflare usa um banco SQLite local; o id só importa no deploy.
+const PRODUCTION_D1_DATABASE_ID = "a76bf110-5ed3-4dfc-9cc3-864b9605c370";
+const PRODUCTION_D1_DATABASE_NAME = "erprint-db";
 
 const { d1, r2 } = hostingConfig;
 
@@ -14,12 +16,15 @@ const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  routes: [{ pattern: "erprint.dutrra.com", custom_domain: true }],
+  images: { binding: "IMAGES" },
   d1_databases: d1
     ? [
         {
           binding: d1,
-          database_name: "site-creator-d1",
-          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_name: PRODUCTION_D1_DATABASE_NAME,
+          database_id: PRODUCTION_D1_DATABASE_ID,
+          migrations_dir: "drizzle",
         },
       ]
     : [],

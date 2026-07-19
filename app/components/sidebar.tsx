@@ -4,11 +4,10 @@ import { LogoutButton } from "./logout-button";
 type SidebarProps = {
   companyName: string;
   userEmail: string;
-  provider: "password" | "chatgpt";
   active?: "company" | "printers" | "filaments" | "supplies" | "sales-channels";
 };
 
-export function Sidebar({ companyName, userEmail, provider, active }: SidebarProps) {
+export function Sidebar({ companyName, userEmail, active }: SidebarProps) {
   return (
     <aside className="sidebar">
       <Link className="brand" href="/dashboard" aria-label="ERPrint — painel inicial">
@@ -47,7 +46,7 @@ export function Sidebar({ companyName, userEmail, provider, active }: SidebarPro
           <strong>{companyName}</strong>
           <span>{userEmail}</span>
         </div>
-        <LogoutButton provider={provider} />
+        <LogoutButton />
       </div>
     </aside>
   );

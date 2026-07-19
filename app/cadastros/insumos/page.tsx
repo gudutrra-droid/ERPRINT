@@ -63,7 +63,6 @@ export default async function SuppliesPage({ searchParams }: SuppliesPageProps) 
       <Sidebar
         companyName={company.name}
         userEmail={user.email}
-        provider={user.provider}
         active="supplies"
       />
 

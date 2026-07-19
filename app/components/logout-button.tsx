@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
-import { chatGPTSignOutPath } from "../lib/chatgpt-auth-paths";
 
-type LogoutButtonProps = { provider: "password" | "chatgpt" };
-
-export function LogoutButton({ provider }: LogoutButtonProps) {
+export function LogoutButton() {
   const [pending, setPending] = useState(false);
-
-  if (provider === "chatgpt") {
-    return <a href={chatGPTSignOutPath("/")} aria-label="Sair do ERPrint">↗</a>;
-  }
 
   return (
     <button

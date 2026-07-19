@@ -62,7 +62,6 @@ export default async function PrintersPage({ searchParams }: PrintersPageProps) 
       <Sidebar
         companyName={company.name}
         userEmail={user.email}
-        provider={user.provider}
         active="printers"
       />
 

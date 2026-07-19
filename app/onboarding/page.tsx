@@ -29,7 +29,7 @@ export default async function Onboarding({ searchParams }: OnboardingProps) {
         </Link>
         <div className="user-chip">
           <span>{user.displayName}</span>
-          <LogoutButton provider={user.provider} />
+          <LogoutButton />
         </div>
       </header>
 

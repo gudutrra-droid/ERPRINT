@@ -42,7 +42,6 @@ export default async function CompanySettings({ searchParams }: CompanySettingsP
       <Sidebar
         companyName={company.name}
         userEmail={user.email}
-        provider={user.provider}
         active="company"
       />
 

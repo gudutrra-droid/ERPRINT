@@ -26,8 +26,7 @@ test("server-renders the public ERPrint sign-in", async () => {
   assert.match(html, /E-mail/);
   assert.match(html, /Senha/);
   assert.match(html, /Entrar no ERPrint/);
-  assert.match(html, /Continuar com ChatGPT/);
-  assert.match(html, /\/signin-with-chatgpt\?return_to=%2Fonboarding/);
+  assert.doesNotMatch(html, /ChatGPT|signin-with-chatgpt/);
   assert.match(html, /Produção, pedidos, estoque e Shopee conectados/);
 });
 

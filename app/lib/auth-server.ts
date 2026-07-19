@@ -21,7 +21,6 @@ export function getPasswordAuth() {
     basePath: "/api/auth",
     trustedOrigins: [
       "https://erprint.dutrra.com",
-      "https://erprint-erp.guuhdutrra.chatgpt.site",
       "http://localhost:3000",
       "http://localhost:5173",
     ],

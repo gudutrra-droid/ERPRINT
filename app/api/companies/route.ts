@@ -45,7 +45,7 @@ export async function POST(request: Request) {
         id: crypto.randomUUID(),
         companyId,
         userEmail: email,
-        authUserId: user.provider === "password" ? user.id : null,
+        authUserId: user.id,
         displayName: user.fullName,
         role: "owner",
       }),

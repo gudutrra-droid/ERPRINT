@@ -53,7 +53,6 @@ export default async function FilamentsPage({ searchParams }: FilamentsPageProps
       <Sidebar
         companyName={company.name}
         userEmail={user.email}
-        provider={user.provider}
         active="filaments"
       />
 

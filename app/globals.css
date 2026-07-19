@@ -216,34 +216,6 @@ button:focus-visible {
   padding: 10px 14px;
 }
 
-.auth-divider {
-  align-items: center;
-  color: var(--faint);
-  display: flex;
-  font-size: 12px;
-  gap: 12px;
-  margin: 18px 0;
-}
-.auth-divider::before, .auth-divider::after { background: var(--line); content: ""; flex: 1; height: 1px; }
-
-.chatgpt-secondary {
-  align-items: center;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 980px;
-  color: var(--foreground);
-  display: flex;
-  font-size: 14px;
-  font-weight: 530;
-  gap: 9px;
-  justify-content: center;
-  min-height: 44px;
-  text-decoration: none;
-  transition: background 200ms var(--ease), border-color 200ms var(--ease);
-}
-.chatgpt-secondary:hover { background: var(--surface-strong); border-color: var(--line-strong); }
-.chatgpt-secondary span { color: var(--blue-light); }
-
 .auth-security { color: var(--faint); font-size: 12px; margin: 16px 0 0; text-align: center; }
 .auth-security i {
   background: var(--success);
@@ -269,8 +241,6 @@ button:focus-visible {
   .login-form label { gap: 5px; }
   .login-form input { min-height: 43px; }
   .login-form .primary-button { margin-top: 4px; min-height: 45px; }
-  .auth-divider { margin: 11px 0; }
-  .chatgpt-secondary { min-height: 40px; }
   .auth-security { margin-top: 10px; }
   .auth-footer { font-size: 11px; padding-top: 14px; }
 }

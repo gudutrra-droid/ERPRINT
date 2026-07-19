@@ -5,10 +5,9 @@ import { authClient } from "../lib/auth-client";
 
 type AuthFormProps = {
   returnTo: string;
-  chatGPTSignInPath: string;
 };
 
-export function AuthForm({ returnTo, chatGPTSignInPath }: AuthFormProps) {
+export function AuthForm({ returnTo }: AuthFormProps) {
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,10 +78,6 @@ export function AuthForm({ returnTo, chatGPTSignInPath }: AuthFormProps) {
         </button>
       </form>
 
-      <div className="auth-divider"><span>ou</span></div>
-      <a className="chatgpt-secondary" href={chatGPTSignInPath}>
-        <span aria-hidden="true">✦</span> Continuar com ChatGPT
-      </a>
       <p className="auth-security"><i aria-hidden="true" /> Senha protegida e sessão criptografada.</p>
     </div>
   );

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthForm } from "./components/auth-form";
 import { getAppUser } from "./current-user";
-import { chatGPTSignInPath } from "./chatgpt-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -46,10 +45,7 @@ export default async function Home({ searchParams }: HomeProps) {
           </p>
         </div>
 
-        <AuthForm
-          returnTo={returnTo}
-          chatGPTSignInPath={chatGPTSignInPath("/onboarding")}
-        />
+        <AuthForm returnTo={returnTo} />
 
         <footer className="auth-footer">© {new Date().getFullYear()} ERPrint · Duttra</footer>
       </section>

@@ -54,7 +54,6 @@ export default async function SalesChannelsPage({ searchParams }: SalesChannelsP
       <Sidebar
         companyName={company.name}
         userEmail={user.email}
-        provider={user.provider}
         active="sales-channels"
       />
 

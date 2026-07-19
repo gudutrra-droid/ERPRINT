@@ -21,7 +21,6 @@ export default async function Dashboard() {
       <Sidebar
         companyName={company.name}
         userEmail={user.email}
-        provider={user.provider}
       />
 
       <main className="main-content">

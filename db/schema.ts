@@ -115,6 +115,109 @@ export const companies = sqliteTable(
   ],
 );
 
+export const printers = sqliteTable(
+  "printers",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    brand: text("brand").notNull(),
+    model: text("model").notNull(),
+    powerWatts: integer("power_watts").notNull(),
+    purchasePriceCents: integer("purchase_price_cents").notNull().default(0),
+    usefulLifeHours: integer("useful_life_hours").notNull().default(0),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("printers_company_id_idx").on(table.companyId),
+    uniqueIndex("printers_company_name_unique").on(table.companyId, table.name),
+  ],
+);
+
+export const filaments = sqliteTable(
+  "filaments",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    material: text("material").notNull(),
+    brand: text("brand"),
+    pricePerKgCents: integer("price_per_kg_cents").notNull(),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("filaments_company_id_idx").on(table.companyId),
+    uniqueIndex("filaments_company_name_unique").on(table.companyId, table.name),
+  ],
+);
+
+export const supplies = sqliteTable(
+  "supplies",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    category: text("category").notNull(),
+    unitPriceTenThousandths: integer("unit_price_ten_thousandths").notNull(),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("supplies_company_id_idx").on(table.companyId),
+    uniqueIndex("supplies_company_name_unique").on(table.companyId, table.name),
+  ],
+);
+
+export const salesChannels = sqliteTable(
+  "sales_channels",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    percentageFeeBps: integer("percentage_fee_bps").notNull().default(0),
+    fixedFeeCents: integer("fixed_fee_cents").notNull().default(0),
+    shippingFeeBps: integer("shipping_fee_bps").notNull().default(0),
+    shippingFeeCents: integer("shipping_fee_cents").notNull().default(0),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("sales_channels_company_id_idx").on(table.companyId),
+    uniqueIndex("sales_channels_company_name_unique").on(table.companyId, table.name),
+  ],
+);
+
+export const salesChannelFeeRanges = sqliteTable(
+  "sales_channel_fee_ranges",
+  {
+    id: text("id").primaryKey(),
+    salesChannelId: text("sales_channel_id")
+      .notNull()
+      .references(() => salesChannels.id, { onDelete: "cascade" }),
+    minSaleCents: integer("min_sale_cents").notNull().default(0),
+    maxSaleCents: integer("max_sale_cents"),
+    percentageFeeBps: integer("percentage_fee_bps").notNull().default(0),
+    fixedFeeCents: integer("fixed_fee_cents").notNull().default(0),
+    position: integer("position").notNull().default(0),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [index("sales_channel_fee_ranges_channel_id_idx").on(table.salesChannelId)],
+);
+
 export const companyMembers = sqliteTable(
   "company_members",
   {
@@ -136,3 +239,8 @@ export const companyMembers = sqliteTable(
 );
 
 export type Company = typeof companies.$inferSelect;
+export type Printer = typeof printers.$inferSelect;
+export type Filament = typeof filaments.$inferSelect;
+export type Supply = typeof supplies.$inferSelect;
+export type SalesChannel = typeof salesChannels.$inferSelect;
+export type SalesChannelFeeRange = typeof salesChannelFeeRanges.$inferSelect;

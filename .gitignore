@@ -45,3 +45,4 @@ next-env.d.ts
 
 # Codex local preview logs
 /.codex-*.log
+/.wrangler-backup*/

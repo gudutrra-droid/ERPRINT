@@ -1,17 +1,11 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { AppUser } from "../app/current-user";
 import { getDb } from ".";
 import { companies, companyMembers } from "./schema";
 
 export async function getCompanyForUser(user: AppUser) {
   const db = getDb();
-  const ownership =
-    user.provider === "password"
-      ? eq(companyMembers.authUserId, user.id)
-      : and(
-          eq(companyMembers.userEmail, user.email.toLowerCase()),
-          isNull(companyMembers.authUserId),
-        );
+  const ownership = eq(companyMembers.authUserId, user.id);
 
   const [company] = await db
     .select({

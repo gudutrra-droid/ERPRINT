@@ -4,7 +4,15 @@ import { LogoutButton } from "./logout-button";
 type SidebarProps = {
   companyName: string;
   userEmail: string;
-  active?: "company" | "printers" | "filaments" | "supplies" | "sales-channels";
+  active?:
+    | "dashboard"
+    | "sales"
+    | "shopee"
+    | "company"
+    | "printers"
+    | "filaments"
+    | "supplies"
+    | "sales-channels";
 };
 
 export function Sidebar({ companyName, userEmail, active }: SidebarProps) {
@@ -16,6 +24,21 @@ export function Sidebar({ companyName, userEmail, active }: SidebarProps) {
       </Link>
 
       <nav className="sidebar-nav" aria-label="Navegação principal">
+        <Link className={active === "dashboard" ? "active" : undefined} href="/dashboard">
+          <span className="nav-icon" aria-hidden="true"><span className="dashboard-glyph" /></span>
+          <span><strong>Painel</strong><small>Visão geral</small></span>
+        </Link>
+        <Link className={active === "sales" ? "active" : undefined} href="/vendas">
+          <span className="nav-icon" aria-hidden="true"><span className="sales-glyph" /></span>
+          <span><strong>Vendas</strong><small>Faturamento</small></span>
+        </Link>
+        <Link className={active === "shopee" ? "active" : undefined} href="/integracoes/shopee">
+          <span className="nav-icon" aria-hidden="true"><span className="shopee-glyph" /></span>
+          <span><strong>Shopee</strong><small>Integração</small></span>
+        </Link>
+
+        <span className="nav-divider" aria-hidden="true" />
+
         <Link className={active === "company" ? "active" : undefined} href="/configuracoes/empresa">
           <span className="nav-icon" aria-hidden="true"><span className="company-icon" /></span>
           <span><strong>Empresa</strong><small>Configurações</small></span>

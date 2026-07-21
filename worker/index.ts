@@ -20,6 +20,11 @@ interface ExecutionContext {
   passThroughOnException(): void;
 }
 
+interface ScheduledController {
+  cron: string;
+  scheduledTime: number;
+}
+
 // Image security config. SVG sources with .svg extension auto-skip the
 // optimization endpoint on the client side (served directly, no proxy).
 // To route SVGs through the optimizer (with security headers), set
@@ -42,6 +47,13 @@ const worker = {
     }
 
     return handler.fetch(request, env, ctx);
+  },
+
+  // Cron Trigger da Cloudflare (ver triggers.crons em vite.config.ts).
+  // Roda a cada 1 minuto: sincroniza vendas e gasto com ADS da Shopee.
+  async scheduled(_controller: ScheduledController, _env: Env, ctx: ExecutionContext): Promise<void> {
+    const { runShopeePoll } = await import("../lib/shopee/poller");
+    ctx.waitUntil(runShopeePoll());
   },
 };
 

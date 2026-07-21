@@ -17,6 +17,8 @@ const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
   routes: [{ pattern: "erprint.dutrra.com", custom_domain: true }],
+  // Cron Trigger: sincroniza vendas e ADS da Shopee a cada 1 minuto.
+  triggers: { crons: ["* * * * *"] },
   images: { binding: "IMAGES" },
   d1_databases: d1
     ? [

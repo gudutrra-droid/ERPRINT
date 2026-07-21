@@ -238,9 +238,190 @@ export const companyMembers = sqliteTable(
   ],
 );
 
+// ── Shopee: chaves da Open Platform API por empresa ──────────────
+export const shopeeConfigs = sqliteTable(
+  "shopee_configs",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    partnerId: text("partner_id"),
+    partnerKey: text("partner_key"),
+    environment: text("environment").notNull().default("production"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [uniqueIndex("shopee_configs_company_unique").on(table.companyId)],
+);
+
+// ── Shopee: loja autorizada (integração) ─────────────────────────
+export const shopeeIntegrations = sqliteTable(
+  "shopee_integrations",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    shopId: text("shop_id").notNull(),
+    shopName: text("shop_name"),
+    accessToken: text("access_token").notNull(),
+    refreshToken: text("refresh_token").notNull(),
+    tokenExpiresAt: text("token_expires_at").notNull(),
+    environment: text("environment").notNull().default("production"),
+    salesChannelId: text("sales_channel_id").references(() => salesChannels.id, {
+      onDelete: "set null",
+    }),
+    autoSyncSales: integer("auto_sync_sales", { mode: "boolean" }).notNull().default(true),
+    syncIntervalS: integer("sync_interval_s").notNull().default(60),
+    autoSyncAds: integer("auto_sync_ads", { mode: "boolean" }).notNull().default(true),
+    adsSyncIntervalS: integer("ads_sync_interval_s").notNull().default(60),
+    lastSyncAt: text("last_sync_at"),
+    lastAdsSyncAt: text("last_ads_sync_at"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("shopee_integrations_company_id_idx").on(table.companyId),
+    uniqueIndex("shopee_integrations_company_shop_unique").on(table.companyId, table.shopId),
+  ],
+);
+
+// ── Shopee: itens vistos em pedidos aguardando vínculo com produto ─
+export const shopeePendingItems = sqliteTable(
+  "shopee_pending_items",
+  {
+    id: text("id").primaryKey(),
+    integrationId: text("integration_id")
+      .notNull()
+      .references(() => shopeeIntegrations.id, { onDelete: "cascade" }),
+    shopeeItemId: text("shopee_item_id").notNull(),
+    shopeeModelId: text("shopee_model_id").notNull().default("0"),
+    shopeeItemName: text("shopee_item_name"),
+    shopeeSku: text("shopee_sku"),
+    shopeeImageUrl: text("shopee_image_url"),
+    occurrences: integer("occurrences").notNull().default(1),
+    lastSeenAt: text("last_seen_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("shopee_pending_unique").on(
+      table.integrationId,
+      table.shopeeItemId,
+      table.shopeeModelId,
+    ),
+  ],
+);
+
+// ── Shopee: vínculo anúncio → produto (produto chega em módulo futuro) ─
+export const shopeeProductMappings = sqliteTable(
+  "shopee_product_mappings",
+  {
+    id: text("id").primaryKey(),
+    integrationId: text("integration_id")
+      .notNull()
+      .references(() => shopeeIntegrations.id, { onDelete: "cascade" }),
+    shopeeItemId: text("shopee_item_id").notNull(),
+    shopeeModelId: text("shopee_model_id").notNull().default("0"),
+    shopeeItemName: text("shopee_item_name"),
+    shopeeSku: text("shopee_sku"),
+    productId: text("product_id"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("shopee_mapping_unique").on(
+      table.integrationId,
+      table.shopeeItemId,
+      table.shopeeModelId,
+    ),
+  ],
+);
+
+// ── Shopee: histórico de sincronizações ──────────────────────────
+export const shopeeSyncLogs = sqliteTable(
+  "shopee_sync_logs",
+  {
+    id: text("id").primaryKey(),
+    integrationId: text("integration_id")
+      .notNull()
+      .references(() => shopeeIntegrations.id, { onDelete: "cascade" }),
+    syncType: text("sync_type").notNull(),
+    status: text("status").notNull(),
+    message: text("message"),
+    ordersImported: integer("orders_imported").notNull().default(0),
+    ordersPending: integer("orders_pending").notNull().default(0),
+    startedAt: text("started_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    finishedAt: text("finished_at"),
+  },
+  (table) => [index("shopee_sync_logs_integration_id_idx").on(table.integrationId)],
+);
+
+// ── Vendas ───────────────────────────────────────────────────────
+export const sales = sqliteTable(
+  "sales",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    saleDate: text("sale_date").notNull(),
+    quantity: integer("quantity").notNull().default(1),
+    saleValueCents: integer("sale_value_cents").notNull(),
+    salesChannelId: text("sales_channel_id").references(() => salesChannels.id, {
+      onDelete: "set null",
+    }),
+    orderNumber: text("order_number"),
+    shopeeOrderSn: text("shopee_order_sn"),
+    orderStatus: text("order_status"),
+    buyerUsername: text("buyer_username"),
+    source: text("source").notNull().default("manual"),
+    itemName: text("item_name"),
+    itemSku: text("item_sku"),
+    imageUrl: text("image_url"),
+    productId: text("product_id"),
+    snapshotProductionCostCents: integer("snapshot_production_cost_cents"),
+    snapshotChannelCostCents: integer("snapshot_channel_cost_cents"),
+    snapshotTaxCostCents: integer("snapshot_tax_cost_cents"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("sales_company_id_idx").on(table.companyId),
+    index("sales_company_date_idx").on(table.companyId, table.saleDate),
+    uniqueIndex("sales_shopee_order_sn_unique").on(table.shopeeOrderSn),
+  ],
+);
+
+// ── Gasto com anúncios (ADS): um registro por empresa/dia/origem ──
+export const adSpend = sqliteTable(
+  "ad_spend",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    spendDate: text("spend_date").notNull(),
+    amountCents: integer("amount_cents").notNull().default(0),
+    source: text("source").notNull().default("shopee"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("ad_spend_company_id_idx").on(table.companyId),
+    uniqueIndex("ad_spend_company_date_source_unique").on(
+      table.companyId,
+      table.spendDate,
+      table.source,
+    ),
+  ],
+);
+
 export type Company = typeof companies.$inferSelect;
 export type Printer = typeof printers.$inferSelect;
 export type Filament = typeof filaments.$inferSelect;
 export type Supply = typeof supplies.$inferSelect;
 export type SalesChannel = typeof salesChannels.$inferSelect;
 export type SalesChannelFeeRange = typeof salesChannelFeeRanges.$inferSelect;
+export type ShopeeConfig = typeof shopeeConfigs.$inferSelect;
+export type ShopeeIntegration = typeof shopeeIntegrations.$inferSelect;
+export type ShopeePendingItem = typeof shopeePendingItems.$inferSelect;
+export type ShopeeSyncLog = typeof shopeeSyncLogs.$inferSelect;
+export type Sale = typeof sales.$inferSelect;
+export type AdSpend = typeof adSpend.$inferSelect;

@@ -72,6 +72,7 @@ export async function POST(request: Request) {
       printTimeHours: productType === "production" ? Math.max(0, intVal(body.printTimeHours)) : 0,
       printTimeMinutes: productType === "production" ? Math.min(59, Math.max(0, intVal(body.printTimeMinutes))) : 0,
       filamentGrams: productType === "production" ? Math.max(0, reais(body.filamentGrams)) : 0,
+      batchUnits: productType === "production" ? Math.max(1, intVal(body.batchUnits) || 1) : 1,
       salePriceCents: Math.round(reais(body.salePrice) * 100),
       salesChannelId: String(body.salesChannelId ?? "") || null,
       updatedAt: nowIso(),

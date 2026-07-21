@@ -71,6 +71,13 @@
       "when": 1784642162550,
       "tag": "0009_spicy_spyke",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1784643442450,
+      "tag": "0010_glossy_nekra",
+      "breakpoints": true
     }
   ]
 }

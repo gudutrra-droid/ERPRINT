@@ -99,15 +99,19 @@ export function computeProductBreakdown(
     salePrice,
   );
 
+  // Lote: tempo e filamento cadastrados são o TOTAL da impressão; divide por peça.
+  const batch = Math.max(1, product.batchUnits || 1);
+  const totalMinutes = (product.printTimeHours * 60 + product.printTimeMinutes) / batch;
+
   return calculatePricing({
-    printTimeHours: isResale ? 0 : product.printTimeHours,
-    printTimeMinutes: isResale ? 0 : product.printTimeMinutes,
+    printTimeHours: isResale ? 0 : Math.floor(totalMinutes / 60),
+    printTimeMinutes: isResale ? 0 : totalMinutes % 60,
     printerPurchasePrice: isResale || !printer ? 0 : printer.purchasePriceCents / 100,
     printerLifespanHours: isResale || !printer ? 1 : printer.usefulLifeHours || 1,
     printerWattage: isResale || !printer ? 0 : printer.powerWatts,
     kwhCost: isResale ? 0 : (ctx.company?.kwhCost ?? 0),
     filamentPricePerKg: isResale || !filament ? 0 : filament.pricePerKgCents / 100,
-    filamentGrams: isResale ? 0 : product.filamentGrams,
+    filamentGrams: isResale ? 0 : product.filamentGrams / batch,
     suppliesCost: suppliesCostReais(product, ctx),
     commissionPercent: rates.commissionPercent,
     fixedFee: rates.fixedFee,

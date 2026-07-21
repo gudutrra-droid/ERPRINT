@@ -28,6 +28,7 @@ type Product = {
   printTimeHours: number;
   printTimeMinutes: number;
   filamentGrams: number;
+  batchUnits: number;
   purchaseCostCents: number;
   salesChannelId: string | null;
   supplies: SupplyLine[];
@@ -57,6 +58,7 @@ type FormState = {
   printTimeHours: string;
   printTimeMinutes: string;
   filamentGrams: string;
+  batchUnits: string;
   purchaseCost: string;
   supplies: { supplyId: string; quantity: string }[];
 };
@@ -72,6 +74,7 @@ const emptyForm = (): FormState => ({
   printTimeHours: "",
   printTimeMinutes: "",
   filamentGrams: "",
+  batchUnits: "1",
   purchaseCost: "",
   supplies: [],
 });
@@ -99,15 +102,20 @@ export function ProductsClient({ products, refs }: { products: Product[]; refs: 
       channel ? refs.feeRanges.filter((r) => r.salesChannelId === channel.id) : [],
       salePrice,
     );
+    // Lote: tempo e filamento informados são o TOTAL da impressão; divide por peça.
+    const batch = Math.max(1, Math.trunc(parseReais(form.batchUnits)) || 1);
+    const perUnitMinutes =
+      (parseReais(form.printTimeHours) * 60 + parseReais(form.printTimeMinutes)) / batch;
+
     return calculatePricing({
-      printTimeHours: isResale ? 0 : parseReais(form.printTimeHours),
-      printTimeMinutes: isResale ? 0 : parseReais(form.printTimeMinutes),
+      printTimeHours: isResale ? 0 : Math.floor(perUnitMinutes / 60),
+      printTimeMinutes: isResale ? 0 : perUnitMinutes % 60,
       printerPurchasePrice: isResale || !printer ? 0 : printer.purchasePriceCents / 100,
       printerLifespanHours: isResale || !printer ? 1 : printer.usefulLifeHours || 1,
       printerWattage: isResale || !printer ? 0 : printer.powerWatts,
       kwhCost: isResale ? 0 : refs.company.kwhCost,
       filamentPricePerKg: isResale || !filament ? 0 : filament.pricePerKgCents / 100,
-      filamentGrams: isResale ? 0 : parseReais(form.filamentGrams),
+      filamentGrams: isResale ? 0 : parseReais(form.filamentGrams) / batch,
       suppliesCost,
       commissionPercent: rates.commissionPercent,
       fixedFee: rates.fixedFee,
@@ -118,6 +126,18 @@ export function ProductsClient({ products, refs }: { products: Product[]; refs: 
       purchaseCost: isResale ? parseReais(form.purchaseCost) : 0,
     });
   }, [form, refs]);
+
+  const batchUnits = Math.max(1, Math.trunc(parseReais(form.batchUnits)) || 1);
+  const perUnitLabel = useMemo(() => {
+    const totalMin = parseReais(form.printTimeHours) * 60 + parseReais(form.printTimeMinutes);
+    const perUnit = totalMin / batchUnits;
+    const h = Math.floor(perUnit / 60);
+    const m = Math.round(perUnit % 60);
+    return {
+      time: h > 0 ? `${h}h ${m}min` : `${m}min`,
+      grams: `${(parseReais(form.filamentGrams) / batchUnits).toFixed(1)} g`,
+    };
+  }, [form.printTimeHours, form.printTimeMinutes, form.filamentGrams, batchUnits]);
 
   const editProduct = (p: Product) => {
     setError(null);
@@ -132,6 +152,7 @@ export function ProductsClient({ products, refs }: { products: Product[]; refs: 
       printTimeHours: p.printTimeHours ? String(p.printTimeHours) : "",
       printTimeMinutes: p.printTimeMinutes ? String(p.printTimeMinutes) : "",
       filamentGrams: p.filamentGrams ? String(p.filamentGrams) : "",
+      batchUnits: String(p.batchUnits || 1),
       purchaseCost: p.purchaseCostCents ? (p.purchaseCostCents / 100).toString() : "",
       supplies: p.supplies.map((s) => ({ supplyId: s.supplyId, quantity: String(s.quantity) })),
     });
@@ -166,6 +187,7 @@ export function ProductsClient({ products, refs }: { products: Product[]; refs: 
         printTimeHours: form.printTimeHours,
         printTimeMinutes: form.printTimeMinutes,
         filamentGrams: form.filamentGrams,
+        batchUnits: form.batchUnits,
         purchaseCost: form.purchaseCost,
         supplies: form.supplies.filter((s) => s.supplyId),
       });
@@ -244,19 +266,35 @@ export function ProductsClient({ products, refs }: { products: Product[]; refs: 
                   </select>
                 </label>
               </div>
+              <label className="batch-field">
+                <span>Peças por impressão <small>lote</small></span>
+                <div className="input-affix"><input type="number" min="1" step="1" value={form.batchUnits} onChange={(e) => set("batchUnits", e.target.value)} placeholder="1" /><b>peça(s)</b></div>
+                <small>
+                  {batchUnits > 1
+                    ? `Informe o tempo e o filamento TOTAIS da impressão — o app divide por ${batchUnits} para achar o custo de cada peça.`
+                    : "Se você imprime várias peças de uma vez, aumente aqui e informe o tempo e o filamento totais do lote."}
+                </small>
+              </label>
+
               <div className="printer-form-row">
                 <label>
-                  <span>Tempo de impressão</span>
+                  <span>Tempo de impressão {batchUnits > 1 ? <small>total do lote</small> : null}</span>
                   <div className="time-inputs">
                     <div className="input-affix"><input type="number" min="0" value={form.printTimeHours} onChange={(e) => set("printTimeHours", e.target.value)} placeholder="0" /><b>h</b></div>
                     <div className="input-affix"><input type="number" min="0" max="59" value={form.printTimeMinutes} onChange={(e) => set("printTimeMinutes", e.target.value)} placeholder="0" /><b>min</b></div>
                   </div>
                 </label>
                 <label>
-                  <span>Filamento usado</span>
+                  <span>Filamento usado {batchUnits > 1 ? <small>total do lote</small> : null}</span>
                   <div className="input-affix"><input type="number" min="0" step="0.1" value={form.filamentGrams} onChange={(e) => set("filamentGrams", e.target.value)} placeholder="0" /><b>g</b></div>
                 </label>
               </div>
+
+              {batchUnits > 1 ? (
+                <p className="batch-hint">
+                  Por peça: <strong>{perUnitLabel.time}</strong> de impressão e <strong>{perUnitLabel.grams}</strong> de filamento.
+                </p>
+              ) : null}
 
               <div className="supplies-block">
                 <div className="supplies-head">
@@ -341,7 +379,10 @@ export function ProductsClient({ products, refs }: { products: Product[]; refs: 
               <article className={`product-row${p.active ? "" : " inactive"}`} key={p.id}>
                 <div className="printer-identity">
                   <h3>{p.name}</h3>
-                  <p>{p.productType === "resale" ? "Revenda" : "Impresso 3D"} · Venda {money(p.salePriceCents)}</p>
+                  <p>
+                    {p.productType === "resale" ? "Revenda" : "Impresso 3D"} · Venda {money(p.salePriceCents)}
+                    {p.productType !== "resale" && p.batchUnits > 1 ? ` · lote de ${p.batchUnits}` : ""}
+                  </p>
                 </div>
                 <div className="product-metrics">
                   <span><small>Custo prod.</small><strong>{money(p.productionCostCents)}</strong></span>

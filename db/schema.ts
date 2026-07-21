@@ -256,6 +256,9 @@ export const products = sqliteTable(
     printTimeHours: integer("print_time_hours").notNull().default(0),
     printTimeMinutes: integer("print_time_minutes").notNull().default(0),
     filamentGrams: real("filament_grams").notNull().default(0),
+    // Peças produzidas por impressão (lote): tempo e filamento acima são o TOTAL
+    // do lote; o custo por peça divide por este número. 1 = impressão unitária.
+    batchUnits: integer("batch_units").notNull().default(1),
     salePriceCents: integer("sale_price_cents").notNull().default(0),
     salesChannelId: text("sales_channel_id").references(() => salesChannels.id, {
       onDelete: "set null",

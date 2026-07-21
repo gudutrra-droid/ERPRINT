@@ -37,6 +37,7 @@ export default async function ProductsPage() {
       printTimeHours: p.printTimeHours,
       printTimeMinutes: p.printTimeMinutes,
       filamentGrams: p.filamentGrams,
+      batchUnits: p.batchUnits,
       purchaseCostCents: p.purchaseCostCents,
       salesChannelId: p.salesChannelId,
       supplies: p.supplies.map((s) => ({ supplyId: s.supplyId, quantity: s.quantity })),

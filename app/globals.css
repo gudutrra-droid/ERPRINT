@@ -1199,6 +1199,18 @@ button:focus-visible {
 
 .time-inputs { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
 
+.batch-field > small { color: var(--faint); font-size: 12px; line-height: 1.45; }
+.batch-hint {
+  background: rgba(10, 132, 255, 0.09);
+  border: 1px solid rgba(10, 132, 255, 0.22);
+  border-radius: var(--radius-s);
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+  padding: 10px 13px;
+}
+.batch-hint strong { color: var(--blue-light); font-weight: 600; }
+
 .supplies-block { border: 1px solid var(--line); border-radius: var(--radius-m); padding: 15px; }
 .supplies-head { align-items: center; display: flex; justify-content: space-between; }
 .supplies-head > span { color: var(--muted); font-size: 13px; font-weight: 550; }

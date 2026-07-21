@@ -9,6 +9,7 @@ type SidebarProps = {
     | "sales"
     | "shopee"
     | "company"
+    | "products"
     | "printers"
     | "filaments"
     | "supplies"
@@ -42,6 +43,10 @@ export function Sidebar({ companyName, userEmail, active }: SidebarProps) {
         <Link className={active === "company" ? "active" : undefined} href="/configuracoes/empresa">
           <span className="nav-icon" aria-hidden="true"><span className="company-icon" /></span>
           <span><strong>Empresa</strong><small>Configurações</small></span>
+        </Link>
+        <Link className={active === "products" ? "active" : undefined} href="/cadastros/produtos">
+          <span className="nav-icon" aria-hidden="true"><span className="product-glyph" /></span>
+          <span><strong>Produtos</strong><small>Catálogo e custo</small></span>
         </Link>
         <Link className={active === "printers" ? "active" : undefined} href="/cadastros/impressoras">
           <span className="nav-icon" aria-hidden="true"><span className="printer-glyph" /></span>

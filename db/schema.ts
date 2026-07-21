@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text, uniqueIndex, index } from "drizzle-orm/sqlite-core";
+import { integer, real, sqliteTable, text, uniqueIndex, index } from "drizzle-orm/sqlite-core";
 
 export const authUsers = sqliteTable(
   "user",
@@ -238,6 +238,56 @@ export const companyMembers = sqliteTable(
   ],
 );
 
+// ── Produtos ─────────────────────────────────────────────────────
+export const products = sqliteTable(
+  "products",
+  {
+    id: text("id").primaryKey(),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    imageUrl: text("image_url"),
+    // "production" (impresso 3D) | "resale" (revenda)
+    productType: text("product_type").notNull().default("production"),
+    purchaseCostCents: integer("purchase_cost_cents").notNull().default(0),
+    printerId: text("printer_id").references(() => printers.id, { onDelete: "set null" }),
+    filamentId: text("filament_id").references(() => filaments.id, { onDelete: "set null" }),
+    printTimeHours: integer("print_time_hours").notNull().default(0),
+    printTimeMinutes: integer("print_time_minutes").notNull().default(0),
+    filamentGrams: real("filament_grams").notNull().default(0),
+    salePriceCents: integer("sale_price_cents").notNull().default(0),
+    salesChannelId: text("sales_channel_id").references(() => salesChannels.id, {
+      onDelete: "set null",
+    }),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("products_company_id_idx").on(table.companyId),
+    uniqueIndex("products_company_name_unique").on(table.companyId, table.name),
+  ],
+);
+
+export const productSupplies = sqliteTable(
+  "product_supplies",
+  {
+    id: text("id").primaryKey(),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    supplyId: text("supply_id")
+      .notNull()
+      .references(() => supplies.id, { onDelete: "cascade" }),
+    quantity: real("quantity").notNull().default(1),
+  },
+  (table) => [
+    index("product_supplies_product_id_idx").on(table.productId),
+    uniqueIndex("product_supplies_product_supply_unique").on(table.productId, table.supplyId),
+  ],
+);
+
 // ── Shopee: chaves da Open Platform API por empresa ──────────────
 export const shopeeConfigs = sqliteTable(
   "shopee_configs",
@@ -425,3 +475,5 @@ export type ShopeePendingItem = typeof shopeePendingItems.$inferSelect;
 export type ShopeeSyncLog = typeof shopeeSyncLogs.$inferSelect;
 export type Sale = typeof sales.$inferSelect;
 export type AdSpend = typeof adSpend.$inferSelect;
+export type Product = typeof products.$inferSelect;
+export type ProductSupply = typeof productSupplies.$inferSelect;
